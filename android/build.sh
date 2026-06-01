@@ -51,7 +51,7 @@ if [ -f /lineage/setup.sh ]; then
     source /lineage/setup.sh
 fi
 # catch SIGPIPE from yes
-yes | repo init -u https://github.com/lineageos/android.git -b ${VERSION} -g default,-darwin,-muppets,muppets_${DEVICE} --repo-rev=${REPO_VERSION} --git-lfs --no-clone-bundle || if [[ $? -eq 141 ]]; then true; else false; fi
+yes | repo init -u https://github.com/LineageOS/android.git -b lineage-16.0 -g default,-darwin,-muppets --git-lfs --no-clone-bundle || if [[ $? -eq 141 ]]; then true; else false; fi
 repo version
 
 echo "Syncing"
@@ -82,29 +82,41 @@ if [ "$RELEASE_TYPE" '==' "experimental" ]; then
     repopick ${EXP_PICK_CHANGES[@]}
   fi
 fi
-echo "--- Building"
-mka otatools-package target-files-package dist check-vintf-all | tee /tmp/android-build.log
+echo "--- Uploading to GitHub Releases"
 
-echo "--- Uploading"
-ssh jenkins@blob.lineageos.org rm -rf /home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
-ssh jenkins@blob.lineageos.org mkdir -p /home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
-scp out/dist/*target_files*.zip jenkins@blob.lineageos.org:/home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
-# s3cmd --no-check-md5 put out/dist/*target_files*.zip s3://lineageos-blob/${DEVICE}/${BUILD_UUID}/ || true
-if [ -f out/soong/.intermediates/build/make/tools/otatools_package/otatools-package/linux_glibc_x86_64/gen/otatools.zip ]; then
-  zip -d out/soong/.intermediates/build/make/tools/otatools_package/otatools-package/linux_glibc_x86_64/gen/otatools.zip \
-    \*.avbpubkey \*.pem \*.pk8 \
-    -x external/avb/test/data/testkey_\*.pem \
-    -x vendor/lineage/build/target/product/security/lineage.x509.pem
-  scp out/soong/.intermediates/build/make/tools/otatools_package/otatools-package/linux_glibc_x86_64/gen/otatools.zip jenkins@blob.lineageos.org:/home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
-  # s3cmd --no-check-md5 put out/soong/.intermediates/build/make/tools/otatools_package/otatools-package/linux_glibc_x86_64/gen/otatools.zip s3://lineageos-blob/${DEVICE}/${BUILD_UUID}/ || true
-else
-  zip -d out/target/product/${DEVICE}/otatools.zip \
-    \*.avbpubkey \*.pem \*.pk8 \
-    -x external/avb/test/data/testkey_\*.pem \
-    -x vendor/lineage/build/target/product/security/lineage.x509.pem
-  scp out/target/product/${DEVICE}/otatools.zip jenkins@blob.lineageos.org:/home/jenkins/incoming/${DEVICE}/${BUILD_UUID}/
-  # s3cmd --no-check-md5 put out/target/product/${DEVICE}/otatools.zip s3://lineageos-blob/${DEVICE}/${BUILD_UUID}/ || true
+# 1. Locate the compiled user-flashable installation ZIP file
+ZIP_PATH=$(ls out/target/product/${DEVICE}/lineage-16.0-*-UNOFFICIAL-${DEVICE}.zip | head -n 1)
+
+# 2. Check if the file actually compiled successfully before trying to upload
+if [ -z "$ZIP_PATH" ] || [ ! -f "$ZIP_PATH" ]; then
+  echo "Error: Flashable ROM ZIP not found. Build must have failed."
+  exit 1
 fi
+
+# 3. Explicitly define your repository (Replace YOUR_ORGANIZATION_NAME with your real GitHub name)
+TARGET_REPO="YOUR_ORGANIZATION_NAME/Gitpod-Rom-Builder"
+echo "Targeting GitHub Repository: $TARGET_REPO"
+
+# 4. Use the GitHub CLI to look up your existing releases and calculate the next version number
+LATEST_TAG=$(gh release list --repo "$TARGET_REPO" --limit 1 | awk '{print $1}')
+
+if [ -z "$LATEST_TAG" ]; then
+  NEXT_VER="1.0"
+else
+  # Strips the prefix to isolate the version number (e.g., "1.1"), then increments it by 0.1
+  VERSION_NUM=$(echo "$LATEST_TAG" | sed "s/lineage-16.0-${DEVICE}-//")
+  NEXT_VER=$(echo "$VERSION_NUM + 0.1" | bc)
+fi
+
+TAG_NAME="lineage-16.0-${DEVICE}-${NEXT_VER}"
+echo "Calculated Tag Name: $TAG_NAME"
+
+# 5. Create the GitHub Release inside your repo and upload your flashable ZIP
+gh release create "$TAG_NAME" "$ZIP_PATH" \
+  --repo "$TARGET_REPO" \
+  --title "$TAG_NAME" \
+  --notes "Automated build for ${DEVICE} generated via Buildkite cloud runner."
+
 
 echo "--- cleanup"
 rm -rf out*
