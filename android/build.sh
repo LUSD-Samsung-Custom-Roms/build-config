@@ -56,4 +56,4 @@ fi
 echo "--- Compiling ROM Zip via Brunch Engine"
 brunch lt01wifi
 
-echo "--- Script Execution Complete"
+
