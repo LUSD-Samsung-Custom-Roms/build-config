@@ -19,6 +19,8 @@ export KERNEL_REPO_PROJECTS_DIR=~/lineage/lineage-16.0/.repo/projects-kernel
 
 echo "--- Syncing"
 mkdir -p ~/lineage/${VERSION}/.repo/local_manifests
+sudo mkdir -p ~/lineage/lineage-16.0"
+chown -R buildkite-agent:buildkite-agent /root/lineage"
 cd ~/lineage/lineage-16.0
 rm -rf .repo/local_manifests/*
 rm -rf vendor || true
