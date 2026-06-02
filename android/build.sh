@@ -10,32 +10,16 @@ unset BUILD_NUMBER
 
 export CPU_SSE42=false
 
-# Fallbacks for crucial runtime environmental variables
-if [ -z "$VERSION" ]; then
-  export VERSION=lineage-16.0
-fi
-
-if [ -z "$DEVICE" ]; then
-  export DEVICE=lt01wifi
-fi
-
-if [ -z "$REPO_VERSION" ]; then
-  export REPO_VERSION=v2.50.1
-fi
-
-if [ -z "$TYPE" ]; then
-  export TYPE=userdebug
-fi
 
 OFFSET="10000000"
 export BUILD_NUMBER=$(($OFFSET + ${BUILDKITE_BUILD_NUMBER:-1}))
 
-export KERNEL_REPO_PROJECT_OBJECTS_DIR=/lineage/${VERSION}/.repo/project-objects-kernel
-export KERNEL_REPO_PROJECTS_DIR=/lineage/${VERSION}/.repo/projects-kernel
+export KERNEL_REPO_PROJECT_OBJECTS_DIR=~/lineage/lineage-16.0/.repo/project-objects-kernel
+export KERNEL_REPO_PROJECTS_DIR=~/lineage/lineage-16.0/.repo/projects-kernel
 
 echo "--- Syncing"
 mkdir -p ~/lineage/${VERSION}/.repo/local_manifests
-cd ~/lineage/${VERSION}
+cd ~/lineage/lineage-16.0
 rm -rf .repo/local_manifests/*
 rm -rf vendor || true
 
@@ -45,7 +29,7 @@ if [ -d "$BUILDKITE_BUILD_CHECKOUT_PATH/.buildkite/local_manifests" ]; then
 fi
 
 # Initializing LineageOS Base with optimized group parameters
-yes | repo init -u https://github.com/LineageOS/android.git -b ${VERSION} -g default,-darwin,-muppets --repo-rev=${REPO_VERSION} --git-lfs --no-clone-bundle || if [[ $? -eq 141 ]]; then true; else false; fi
+yes | repo init -u https://github.com/LineageOS/android.git -b lineage-16.0 -g default,-darwin,-muppets --repo-rev=v2.50.1 --git-lfs --no-clone-bundle || if [[ $? -eq 141 ]]; then true; else false; fi
 repo version
 
 echo "Syncing Repositories"
@@ -65,7 +49,7 @@ echo "--- Clobber Workspaces"
 rm -rf out*
 
 echo "--- Breakfast Validation"
-breakfast ${DEVICE} ${TYPE}
+breakfast lt01wifi userdebug
 
 if [[ "$TARGET_PRODUCT" != lineage_* ]]; then
     echo "Breakfast dependency configuration validation failed, halting script execution."
@@ -73,6 +57,6 @@ if [[ "$TARGET_PRODUCT" != lineage_* ]]; then
 fi
 
 echo "--- Compiling ROM Zip via Brunch Engine"
-brunch ${DEVICE}
+brunch lt01wifi
 
 echo "--- Script Execution Complete"

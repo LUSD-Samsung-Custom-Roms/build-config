@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+
+  <remote name="lusd1"
+          fetch="https://github.com"
+          revision="lineage-16.0" />
+
+  <project name="LUSD-Samsung-Custom-Roms/android_device_samsung_lt01wifi" path="device/samsung/lt01wifi" remote="lusd1" />
+  <project name="LUSD-Samsung-Custom-Roms/android_device_samsung_lt01-common" path="device/samsung/lt01-common" remote="lusd1" />
+  <project name="LUSD-Samsung-Custom-Roms/android_kernel_samsung_smdk4x12" path="kernel/samsung/smdk4x12" remote="lusd1" />
+  <project name="LUSD-Samsung-Custom-Roms/android_hardware_samsung" path="hardware/samsung" remote="lusd1" />
+  <project name="LUSD-Samsung-Custom-Roms/proprietary_vendor_samsung" path="vendor/samsung" remote="lusd1" />
+  <project name="LUSD-Samsung-Custom-Roms/android_packages_apps_SamsungServiceMode" path="packages/apps/SamsungServiceMode" remote="lusd1" />
+
+</manifest>
