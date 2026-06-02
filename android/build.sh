@@ -19,7 +19,7 @@ export KERNEL_REPO_PROJECTS_DIR=./lineage/lineage-16.0/.repo/projects-kernel
 
 echo "--- Syncing"
 mkdir -p ./lineage/lineage-16.0/.repo/local_manifests
-mkdir -p ./lineage/lineage-16.0"
+mkdir -p "./lineage/lineage-16.0"
 cd ./lineage/lineage-16.0
 rm -rf .repo/local_manifests/*
 rm -rf vendor || true
@@ -37,10 +37,10 @@ echo "Syncing Repositories"
 repo forall -c "git reset --hard && git clean -fdx" || true
 
 # Sequential fallback execution block to ensure a successful source checkout
-repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j$(nproc --all)
+repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j"$(nproc --all)"
 
 # Source the target compiler macro tool environment scripts
-. build/envsetup.sh
+./build/envsetup.sh
 
 echo "--- Clobber Workspaces"
 rm -rf out*
@@ -48,7 +48,7 @@ rm -rf out*
 echo "--- Breakfast Validation"
 breakfast lt01wifi userdebug
 
-if [[ "$TARGET_PRODUCT" != lineage_* ]]; then
+if [[ $TARGET_PRODUCT != lineage_* ]]; then
     echo "Breakfast dependency configuration validation failed, halting script execution."
     exit 1
 fi
@@ -56,4 +56,4 @@ fi
 echo "--- Compiling ROM Zip via Brunch Engine"
 brunch lt01wifi
 
-
+echo "--- Script Execution Complete"
