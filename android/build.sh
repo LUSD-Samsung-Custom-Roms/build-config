@@ -17,6 +17,9 @@ export BUILD_NUMBER=$(($OFFSET + ${BUILDKITE_BUILD_NUMBER:-1}))
 export KERNEL_REPO_PROJECT_OBJECTS_DIR=./lineage/lineage-16.0/.repo/project-objects-kernel
 export KERNEL_REPO_PROJECTS_DIR=./lineage/lineage-16.0/.repo/projects-kernel
 
+echo "Installing Repo and Other Tools Needed for Build!"
+apt update && apt upgrade && apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git git-lfs gnupg gperf imagemagick protobuf-compiler python3-protobuf lib32readline-dev lib32z1-dev libdw-dev libelf-dev libgnutls28-dev lz4 libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc xxd zip zlib1g-dev repo
+
 echo "--- Syncing"
 mkdir -p ./lineage/lineage-16.0/.repo/local_manifests
 mkdir -p "./lineage/lineage-16.0"
