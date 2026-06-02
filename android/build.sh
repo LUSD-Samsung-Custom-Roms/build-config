@@ -39,8 +39,6 @@ repo forall -c "git reset --hard && git clean -fdx" || true
 # Sequential fallback execution block to ensure a successful source checkout
 repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j$(nproc --all)
 
-repo forall -vpc "if [ -f .gitattributes ]; then git lfs pull; fi"
-
 # Source the target compiler macro tool environment scripts
 . build/envsetup.sh
 
