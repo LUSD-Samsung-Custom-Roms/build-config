@@ -23,6 +23,7 @@ apt update && apt upgrade -y && apt install -y bc bison build-essential ccache c
 mkdir -p ~/bin
 curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
 chmod a+x ~/bin/repo
+export PATH=~/bin:$PATH
 
 echo "--- Syncing"
 mkdir -p ./lineage/lineage-16.0/.repo/local_manifests
