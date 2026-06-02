@@ -14,14 +14,13 @@ export CPU_SSE42=false
 OFFSET="10000000"
 export BUILD_NUMBER=$(($OFFSET + ${BUILDKITE_BUILD_NUMBER:-1}))
 
-export KERNEL_REPO_PROJECT_OBJECTS_DIR=~/lineage/lineage-16.0/.repo/project-objects-kernel
-export KERNEL_REPO_PROJECTS_DIR=~/lineage/lineage-16.0/.repo/projects-kernel
+export KERNEL_REPO_PROJECT_OBJECTS_DIR=./lineage/lineage-16.0/.repo/project-objects-kernel
+export KERNEL_REPO_PROJECTS_DIR=./lineage/lineage-16.0/.repo/projects-kernel
 
 echo "--- Syncing"
-mkdir -p ~/lineage/${VERSION}/.repo/local_manifests
-sudo mkdir -p ~/lineage/lineage-16.0"
-chown -R buildkite-agent:buildkite-agent /root/lineage"
-cd ~/lineage/lineage-16.0
+mkdir -p ./lineage/lineage-16.0/.repo/local_manifests
+mkdir -p ./lineage/lineage-16.0"
+cd ./lineage/lineage-16.0
 rm -rf .repo/local_manifests/*
 rm -rf vendor || true
 
