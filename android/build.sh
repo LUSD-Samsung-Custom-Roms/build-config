@@ -55,7 +55,7 @@ echo "--- Clobber Workspaces"
 rm -rf out*
 
 echo "--- Breakfast Validation"
-breakfast lt01wifi userdebug
+breakfast lt01wifi
 
 if [[ $TARGET_PRODUCT != lineage_* ]]; then
     echo "Breakfast dependency configuration validation failed, halting script execution."
