@@ -49,7 +49,7 @@ repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync 
 
 # Source the target compiler macro tool environment scripts
 chmod +x ./build/envsetup.sh
-./build/envsetup.sh
+source build/envsetup.sh
 
 echo "--- Clobber Workspaces"
 rm -rf out*
