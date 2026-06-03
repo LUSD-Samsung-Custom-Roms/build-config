@@ -48,6 +48,7 @@ repo forall -c "git reset --hard && git clean -fdx" || true
 repo sync --detach --current-branch --no-tags --force-remove-dirty --force-sync -j"$(nproc --all)"
 
 # Source the target compiler macro tool environment scripts
+chmod +x ./build/envsetup.sh
 ./build/envsetup.sh
 
 echo "--- Clobber Workspaces"
